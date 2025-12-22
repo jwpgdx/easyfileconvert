@@ -19,7 +19,32 @@ export const ConversionControls = ({
     files.length > 0 && files.every((f) => f.status === "COMPLETED");
 
   const handleZipDownload = () => {
-    downloadAllAsZip(files);
+    // 범용 파일 다운로드를 위한 업데이트된 로직
+    const completedFilesWithOutput = completedFiles.filter(
+      (f) => f.outputBlob && f.outputFilename
+    );
+
+    if (completedFilesWithOutput.length === 0) {
+      alert("다운로드할 변환된 파일이 없습니다.");
+      return;
+    }
+
+    // 간단한 ZIP 다운로드 (향후 JSZip 라이브러리 사용 고려)
+    if (completedFilesWithOutput.length === 1) {
+      // 파일이 하나면 직접 다운로드
+      const file = completedFilesWithOutput[0];
+      const link = document.createElement("a");
+      link.href = file.outputUrl;
+      link.download = file.outputFilename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // 여러 파일은 개별 다운로드 (향후 ZIP 구현)
+      alert(
+        "여러 파일은 개별적으로 다운로드해주세요. ZIP 기능은 곧 추가될 예정입니다."
+      );
+    }
   };
 
   const getStartButtonText = () => {
@@ -48,7 +73,7 @@ export const ConversionControls = ({
           size="lg"
           className="bg-green-600 hover:bg-green-700"
         >
-          ZIP으로 모두 다운로드 ({completedFiles.length}개)
+          모두 다운로드 ({completedFiles.length}개)
         </Button>
       )}
 

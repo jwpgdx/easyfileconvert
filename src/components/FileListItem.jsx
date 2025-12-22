@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
-import { downloadFile } from "../utils/download.js";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { FILE_TYPE_ICONS } from "../utils/fileDetector.js";
 
 export const FileListItem = ({
   file,
@@ -16,13 +16,14 @@ export const FileListItem = ({
   const dragStartY = useRef(0);
   const startHeight = useRef(0);
   const handleDownload = () => {
-    if (file.webpUrl) {
-      fetch(file.webpUrl)
-        .then((res) => res.blob())
-        .then((blob) => {
-          const filename = `${file.file.name.split(".")[0]}.webp`;
-          downloadFile(blob, filename);
-        });
+    if (file.outputUrl && file.outputBlob) {
+      const filename = file.outputFilename || `converted_${file.file.name}`;
+      const link = document.createElement("a");
+      link.href = file.outputUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -146,7 +147,9 @@ export const FileListItem = ({
           ) : file.status === "ERROR" ? (
             <div className="text-red-400 text-xl">❌</div>
           ) : (
-            <div className="text-muted-foreground text-xl">🎬</div>
+            <div className="text-muted-foreground text-xl">
+              {FILE_TYPE_ICONS[file.fileType] || "📄"}
+            </div>
           )}
         </div>
 
@@ -157,9 +160,9 @@ export const FileListItem = ({
           </div>
           <div className="text-sm text-muted-foreground">
             {(file.file.size / (1024 * 1024)).toFixed(2)} MB
-            {file.status === "COMPLETED" && file.webpSize && (
+            {file.status === "COMPLETED" && file.outputSize && (
               <span className="text-green-400 ml-2">
-                → {(file.webpSize / (1024 * 1024)).toFixed(2)} MB
+                → {(file.outputSize / (1024 * 1024)).toFixed(2)} MB
               </span>
             )}
           </div>
@@ -263,45 +266,71 @@ export const FileListItem = ({
       </div>
 
       {/* Preview Section */}
-      {showPreview && file.status === "COMPLETED" && file.webpUrl && (
+      {showPreview && file.status === "COMPLETED" && file.outputUrl && (
         <div className="mt-4 border-t border-border pt-4">
           <h4 className="text-foreground font-medium mb-4">미리보기 비교</h4>
 
           {/* Side by Side Preview */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            {/* Original Video */}
+            {/* Original File */}
             <div className="bg-muted rounded-lg p-4">
               <div className="text-foreground font-medium mb-2 text-center">
-                원본
+                원본 ({file.fileType})
               </div>
-              <video
-                src={file.originalUrl}
-                autoPlay
-                loop
-                muted
-                className="w-full mx-auto rounded object-contain"
-                style={{ height: `${previewHeight}px` }}
-              />
+              {file.fileType === "video" ? (
+                <video
+                  src={file.originalUrl}
+                  autoPlay
+                  loop
+                  muted
+                  className="w-full mx-auto rounded object-contain"
+                  style={{ height: `${previewHeight}px` }}
+                />
+              ) : file.fileType === "image" ? (
+                <img
+                  src={file.originalUrl}
+                  alt="원본 이미지"
+                  className="w-full mx-auto rounded object-contain"
+                  style={{ height: `${previewHeight}px` }}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-32 text-muted-foreground">
+                  미리보기 지원 안함
+                </div>
+              )}
               <div className="mt-2 text-xs text-muted-foreground text-center">
                 크기: {(file.file.size / (1024 * 1024)).toFixed(2)} MB
               </div>
             </div>
 
-            {/* WebP Result */}
+            {/* Converted Result */}
             <div className="bg-muted rounded-lg p-4">
               <div className="text-foreground font-medium mb-2 text-center">
-                WebP
+                변환 결과
               </div>
-              <img
-                src={file.webpUrl}
-                alt="WebP 변환 결과"
-                className="w-full mx-auto rounded object-contain"
-                style={{ height: `${previewHeight}px` }}
-              />
+              {file.fileType === "video" ? (
+                <img
+                  src={file.outputUrl}
+                  alt="변환 결과"
+                  className="w-full mx-auto rounded object-contain"
+                  style={{ height: `${previewHeight}px` }}
+                />
+              ) : file.fileType === "image" ? (
+                <img
+                  src={file.outputUrl}
+                  alt="변환 결과"
+                  className="w-full mx-auto rounded object-contain"
+                  style={{ height: `${previewHeight}px` }}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-32 text-muted-foreground">
+                  미리보기 지원 안함
+                </div>
+              )}
               <div className="mt-2 text-xs text-muted-foreground text-center">
                 크기:{" "}
-                {file.webpSize
-                  ? (file.webpSize / (1024 * 1024)).toFixed(2) + " MB"
+                {file.outputSize
+                  ? (file.outputSize / (1024 * 1024)).toFixed(2) + " MB"
                   : "계산 중..."}
               </div>
             </div>
@@ -330,18 +359,20 @@ export const FileListItem = ({
                 </div>
               </div>
               <div>
-                <div>결과: image/webp</div>
+                <div>
+                  결과: {file.outputFilename?.split(".").pop()?.toUpperCase()}
+                </div>
                 <div>
                   크기:{" "}
-                  {file.webpSize
-                    ? (file.webpSize / (1024 * 1024)).toFixed(2) + " MB"
+                  {file.outputSize
+                    ? (file.outputSize / (1024 * 1024)).toFixed(2) + " MB"
                     : "계산 중..."}
                 </div>
-                {file.webpSize && (
+                {file.outputSize && (
                   <div className="text-green-400 mt-1">
                     압축률:{" "}
                     {(
-                      ((file.file.size - file.webpSize) / file.file.size) *
+                      ((file.file.size - file.outputSize) / file.file.size) *
                       100
                     ).toFixed(1)}
                     % 절약
