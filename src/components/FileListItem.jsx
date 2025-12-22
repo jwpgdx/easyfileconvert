@@ -135,10 +135,10 @@ export const FileListItem = ({
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className="bg-slate-800 rounded-lg p-4">
+    <div className="bg-card rounded-lg p-4 border border-border">
       <div className="flex items-center gap-4">
         {/* Status Icon */}
-        <div className="flex-shrink-0 w-12 h-12 bg-slate-700 rounded flex items-center justify-center">
+        <div className="flex-shrink-0 w-12 h-12 bg-muted rounded flex items-center justify-center">
           {file.status === "COMPLETED" ? (
             <div className="text-green-400 text-xl">✅</div>
           ) : file.status === "PROCESSING" ? (
@@ -146,16 +146,16 @@ export const FileListItem = ({
           ) : file.status === "ERROR" ? (
             <div className="text-red-400 text-xl">❌</div>
           ) : (
-            <div className="text-slate-500 text-xl">🎬</div>
+            <div className="text-muted-foreground text-xl">🎬</div>
           )}
         </div>
 
         {/* File Info */}
         <div className="flex-1 min-w-0">
-          <div className="text-white font-medium truncate">
+          <div className="text-foreground font-medium truncate">
             {file.file.name}
           </div>
-          <div className="text-sm text-slate-400">
+          <div className="text-sm text-muted-foreground">
             {(file.file.size / (1024 * 1024)).toFixed(2)} MB
             {file.status === "COMPLETED" && file.webpSize && (
               <span className="text-green-400 ml-2">
@@ -165,7 +165,9 @@ export const FileListItem = ({
           </div>
           {/* Detailed progress info */}
           {getDetailText() && (
-            <div className="text-xs text-slate-500 mt-1">{getDetailText()}</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              {getDetailText()}
+            </div>
           )}
         </div>
 
@@ -262,14 +264,14 @@ export const FileListItem = ({
 
       {/* Preview Section */}
       {showPreview && file.status === "COMPLETED" && file.webpUrl && (
-        <div className="mt-4 border-t border-slate-700 pt-4">
-          <h4 className="text-white font-medium mb-4">미리보기 비교</h4>
+        <div className="mt-4 border-t border-border pt-4">
+          <h4 className="text-foreground font-medium mb-4">미리보기 비교</h4>
 
           {/* Side by Side Preview */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {/* Original Video */}
-            <div className="bg-slate-900 rounded-lg p-4">
-              <div className="text-slate-300 font-medium mb-2 text-center">
+            <div className="bg-muted rounded-lg p-4">
+              <div className="text-foreground font-medium mb-2 text-center">
                 원본
               </div>
               <video
@@ -280,14 +282,14 @@ export const FileListItem = ({
                 className="w-full mx-auto rounded object-contain"
                 style={{ height: `${previewHeight}px` }}
               />
-              <div className="mt-2 text-xs text-slate-400 text-center">
+              <div className="mt-2 text-xs text-muted-foreground text-center">
                 크기: {(file.file.size / (1024 * 1024)).toFixed(2)} MB
               </div>
             </div>
 
             {/* WebP Result */}
-            <div className="bg-slate-900 rounded-lg p-4">
-              <div className="text-slate-300 font-medium mb-2 text-center">
+            <div className="bg-muted rounded-lg p-4">
+              <div className="text-foreground font-medium mb-2 text-center">
                 WebP
               </div>
               <img
@@ -296,7 +298,7 @@ export const FileListItem = ({
                 className="w-full mx-auto rounded object-contain"
                 style={{ height: `${previewHeight}px` }}
               />
-              <div className="mt-2 text-xs text-slate-400 text-center">
+              <div className="mt-2 text-xs text-muted-foreground text-center">
                 크기:{" "}
                 {file.webpSize
                   ? (file.webpSize / (1024 * 1024)).toFixed(2) + " MB"
@@ -308,19 +310,19 @@ export const FileListItem = ({
           {/* Resize Handle */}
           <div className="flex justify-center mb-4">
             <div
-              className={`w-16 h-2 bg-slate-600 rounded-full cursor-ns-resize hover:bg-slate-500 transition-colors flex items-center justify-center ${
-                isDragging ? "bg-blue-500" : ""
+              className={`w-16 h-2 bg-muted rounded-full cursor-ns-resize hover:bg-muted-foreground/20 transition-colors flex items-center justify-center ${
+                isDragging ? "bg-primary" : ""
               }`}
               onMouseDown={handleMouseDown}
             >
-              <div className="w-8 h-0.5 bg-slate-400 rounded"></div>
+              <div className="w-8 h-0.5 bg-muted-foreground rounded"></div>
             </div>
           </div>
 
           {/* Format Comparison */}
-          <div className="bg-slate-700 rounded-lg p-3 text-sm">
-            <div className="text-slate-300 font-medium mb-2">변환 정보</div>
-            <div className="grid grid-cols-2 gap-4 text-slate-400">
+          <div className="bg-muted rounded-lg p-3 text-sm border border-border">
+            <div className="text-foreground font-medium mb-2">변환 정보</div>
+            <div className="grid grid-cols-2 gap-4 text-muted-foreground">
               <div>
                 <div>원본: {file.file.type}</div>
                 <div>

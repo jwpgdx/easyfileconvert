@@ -41,13 +41,13 @@ export const FileDropzone = ({ onFilesAdded, hasFiles }) => {
             border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
             ${
               isDragActive
-                ? "border-blue-400 bg-blue-500/10"
-                : "border-slate-600 hover:border-slate-500"
+                ? "border-primary bg-primary/10"
+                : "border-border hover:border-muted-foreground"
             }
           `}
         >
           <input {...getInputProps()} />
-          <p className="text-slate-400">
+          <p className="text-muted-foreground">
             {isDragActive
               ? "파일을 여기에 놓으세요..."
               : "추가 파일을 드래그하거나 클릭하여 선택하세요"}
@@ -64,23 +64,23 @@ export const FileDropzone = ({ onFilesAdded, hasFiles }) => {
         border-2 border-dashed rounded-lg p-16 text-center cursor-pointer transition-colors mb-8
         ${
           isDragActive
-            ? "border-blue-400 bg-blue-500/10"
-            : "border-slate-600 hover:border-slate-500"
+            ? "border-primary bg-primary/10"
+            : "border-border hover:border-muted-foreground"
         }
       `}
     >
       <input {...getInputProps()} />
       <div className="text-6xl mb-4">🎬</div>
-      <h3 className="text-2xl font-semibold text-white mb-2">
+      <h3 className="text-2xl font-semibold text-foreground mb-2">
         {isDragActive ? "파일을 여기에 놓으세요" : "비디오 파일을 선택하세요"}
       </h3>
-      <p className="text-slate-400 mb-4">
+      <p className="text-muted-foreground mb-4">
         드래그 앤 드롭하거나 클릭하여 파일을 선택하세요
       </p>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted-foreground">
         최대 {MAX_FILES}개 파일, 파일당 최대 {MAX_FILE_SIZE / (1024 * 1024)}MB
       </p>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-muted-foreground">
         지원 형식: MP4, AVI, MOV, MKV, WebM, FLV, WMV
       </p>
     </div>

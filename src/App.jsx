@@ -240,12 +240,12 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-slate-800 border-b border-slate-700">
+      <header className="bg-card border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold text-white">EasyFileConvert</h1>
-          <p className="text-slate-400 mt-2">
+          <h1 className="text-3xl font-bold text-foreground">EZ2Convert</h1>
+          <p className="text-muted-foreground mt-2">
             클라이언트 사이드 비디오 → WebP 변환기
           </p>
         </div>
