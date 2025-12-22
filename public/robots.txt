@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://easyfileconvert.web.app/sitemap.xml
+Sitemap: https://ez2convert.web.app/sitemap.xml
