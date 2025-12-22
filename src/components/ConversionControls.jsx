@@ -1,5 +1,6 @@
 import React from "react";
 import { downloadAllAsZip } from "../utils/download.js";
+import { Button } from "@/components/ui/button";
 
 export const ConversionControls = ({
   files,
@@ -31,31 +32,30 @@ export const ConversionControls = ({
   return (
     <div className="flex flex-wrap gap-4 justify-center mb-8">
       {files.length > 0 && (
-        <button
+        <Button
           onClick={onStartConversion}
           disabled={isConverting || idleFiles.length === 0}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+          size="lg"
+          className="bg-blue-600 hover:bg-blue-700"
         >
           {getStartButtonText()}
-        </button>
+        </Button>
       )}
 
       {allCompleted && (
-        <button
+        <Button
           onClick={handleZipDownload}
-          className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+          size="lg"
+          className="bg-green-600 hover:bg-green-700"
         >
           ZIP으로 모두 다운로드 ({completedFiles.length}개)
-        </button>
+        </Button>
       )}
 
       {files.length > 0 && !isConverting && (
-        <button
-          onClick={onClearAll}
-          className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
-        >
+        <Button onClick={onClearAll} variant="destructive" size="lg">
           모두 삭제
-        </button>
+        </Button>
       )}
     </div>
   );

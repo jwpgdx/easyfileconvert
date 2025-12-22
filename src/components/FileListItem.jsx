@@ -1,5 +1,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import { downloadFile } from "../utils/download.js";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 export const FileListItem = ({
   file,
@@ -174,18 +176,17 @@ export const FileListItem = ({
 
         {/* Progress Bar */}
         {file.status === "PROCESSING" && (
-          <div className="w-32 bg-slate-700 rounded-full h-2 relative overflow-hidden">
+          <div className="w-32">
             {isIndeterminate() ? (
               // Indeterminate progress bar for non-frame steps
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400">
-                <div className="h-full w-8 bg-gradient-to-r from-transparent via-white to-transparent opacity-50 animate-pulse"></div>
+              <div className="w-full bg-slate-700 rounded-full h-2 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400">
+                  <div className="h-full w-8 bg-gradient-to-r from-transparent via-white to-transparent opacity-50 animate-pulse"></div>
+                </div>
               </div>
             ) : (
               // Frame-based progress bar
-              <div
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${getProgressPercentage()}%` }}
-              />
+              <Progress value={getProgressPercentage()} className="w-full" />
             )}
           </div>
         )}
@@ -193,41 +194,50 @@ export const FileListItem = ({
         {/* Actions */}
         <div className="flex gap-2">
           {(file.status === "IDLE" || file.status === "ERROR") && (
-            <button
+            <Button
               onClick={() => onStartSingle(file.id)}
-              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors"
+              variant="default"
+              size="sm"
+              className="bg-yellow-600 hover:bg-yellow-700"
             >
               {file.status === "ERROR" ? "재시도" : "시작"}
-            </button>
+            </Button>
           )}
           {file.status === "READY" && (
-            <button
+            <Button
               onClick={() => onCancelSingle(file.id)}
-              className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-colors"
+              variant="default"
+              size="sm"
+              className="bg-orange-600 hover:bg-orange-700"
             >
               대기 취소
-            </button>
+            </Button>
           )}
           {file.status === "COMPLETED" && (
-            <button
+            <Button
               onClick={handleDownload}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+              variant="default"
+              size="sm"
+              className="bg-green-600 hover:bg-green-700"
             >
               다운로드
-            </button>
+            </Button>
           )}
           {file.status !== "PROCESSING" && (
-            <button
+            <Button
               onClick={() => onRemove(file.id)}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+              variant="destructive"
+              size="sm"
             >
               삭제
-            </button>
+            </Button>
           )}
           {file.status === "COMPLETED" && (
-            <button
+            <Button
               onClick={() => onTogglePreview(file.id)}
-              className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-200 flex items-center justify-center"
+              variant="default"
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700 px-3"
               title={showPreview ? "미리보기 닫기" : "미리보기 열기"}
             >
               <svg
@@ -245,7 +255,7 @@ export const FileListItem = ({
                   d="M19 9l-7 7-7-7"
                 />
               </svg>
-            </button>
+            </Button>
           )}
         </div>
       </div>
